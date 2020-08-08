@@ -271,6 +271,8 @@ MulticopterAttitudeControl::Run()
 
 	if (_vehicle_attitude_sub.update(&_v_att)) {
 
+		const hrt_abstime now = _v_att.timestamp;
+
 		// Check for new attitude setpoint
 		if (_vehicle_attitude_setpoint_sub.updated()) {
 			vehicle_attitude_setpoint_s vehicle_attitude_setpoint;
@@ -286,8 +288,6 @@ MulticopterAttitudeControl::Run()
 			_man_yaw_sp += Eulerf(delta_q_reset).psi();
 			_attitude_control.adaptAttitudeSetpoint(delta_q_reset);
 		}
-
-		const hrt_abstime now = hrt_absolute_time();
 
 		// Guard against too small (< 0.2ms) and too large (> 20ms) dt's.
 		const float dt = math::constrain(((now - _last_run) / 1e6f), 0.0002f, 0.02f);
